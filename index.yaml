@@ -1,0 +1,38 @@
+version: "1.0"
+generated: "2025-12-26T00:00:00Z"
+patterns:
+  - name: prometheus
+    description: Prometheus monitoring stack for Kubernetes metrics collection
+    category: observability
+    tags:
+      - monitoring
+      - metrics
+      - alerting
+      - grafana
+    versions:
+      - "1.0.0"
+    latest: "1.0.0"
+    author: gitopsi
+    rating: 5.0
+    downloads: 0
+    verified: true
+    deprecated: false
+
+categories:
+  - name: observability
+    description: Monitoring, logging, and tracing patterns
+    icon: "📊"
+    count: 1
+  - name: security
+    description: Security and compliance patterns
+    icon: "🔒"
+    count: 0
+  - name: networking
+    description: Networking and ingress patterns
+    icon: "🌐"
+    count: 0
+  - name: storage
+    description: Storage and data patterns
+    icon: "💾"
+    count: 0
+

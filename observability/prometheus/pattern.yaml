@@ -1,0 +1,83 @@
+apiVersion: gitopsi.io/v1
+kind: Pattern
+metadata:
+  name: prometheus
+  version: "1.0.0"
+  description: Prometheus monitoring stack for Kubernetes metrics collection and alerting
+  author: gitopsi
+  license: Apache-2.0
+  repository: https://github.com/ihsanmokhlisse/gitopsi-patterns
+  tags:
+    - monitoring
+    - metrics
+    - alerting
+    - observability
+  category: observability
+  icon: "📊"
+
+spec:
+  platforms:
+    - name: kubernetes
+      minVersion: "1.21"
+    - name: openshift
+      minVersion: "4.10"
+
+  gitops_tools:
+    - name: argocd
+      minVersion: "2.0"
+    - name: flux
+      minVersion: "2.0"
+
+  dependencies: []
+
+  components:
+    - name: prometheus
+      type: kustomize
+      path: base
+      namespace: monitoring
+      labels:
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/component: monitoring
+
+  config:
+    namespace:
+      type: string
+      default: monitoring
+      description: Namespace where Prometheus will be deployed
+      required: false
+    retention:
+      type: string
+      default: "15d"
+      description: Data retention period
+      required: false
+    storageSize:
+      type: string
+      default: "10Gi"
+      description: Storage size for Prometheus data
+      required: false
+    replicas:
+      type: integer
+      default: 1
+      description: Number of Prometheus replicas
+      required: false
+      min: 1
+      max: 3
+
+  validation:
+    - name: prometheus-ready
+      check: kubectl get pods -n {{ .Config.namespace }} -l app=prometheus --field-selector=status.phase=Running
+      timeout: "5m"
+
+  docs:
+    readme: README.md
+    architecture: docs/architecture.md
+    troubleshooting: docs/troubleshooting.md
+
+  hooks:
+    preInstall: |
+      echo "Creating namespace if not exists..."
+      kubectl create namespace {{ .Config.namespace }} --dry-run=client -o yaml | kubectl apply -f -
+    postInstall: |
+      echo "Prometheus installed successfully!"
+      echo "Access Prometheus UI: kubectl port-forward -n {{ .Config.namespace }} svc/prometheus 9090:9090"
+
